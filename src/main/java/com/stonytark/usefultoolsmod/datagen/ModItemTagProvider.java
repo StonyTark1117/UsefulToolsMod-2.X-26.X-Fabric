@@ -1,0 +1,163 @@
+package com.stonytark.usefultoolsmod.datagen;
+
+import com.stonytark.usefultoolsmod.item.ModItems;
+import com.stonytark.usefultoolsmod.util.ModTags;
+import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
+import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagsProvider;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.tags.ItemTags;
+
+import java.util.concurrent.CompletableFuture;
+
+public class ModItemTagProvider extends FabricTagsProvider.ItemTagsProvider {
+
+    public ModItemTagProvider(FabricPackOutput output,
+                              CompletableFuture<HolderLookup.Provider> lookupProvider) {
+        super(output, lookupProvider);
+    }
+
+    @Override
+    protected void addTags(HolderLookup.Provider pProvider) {
+        valueLookupBuilder(ItemTags.TRIMMABLE_ARMOR)
+                .add(ModItems.EMERALD_HELMET)
+                .add(ModItems.EMERALD_CHESTPLATE)
+                .add(ModItems.EMERALD_LEGGINGS)
+                .add(ModItems.EMERALD_BOOTS)
+                .add(ModItems.HRED_HELMET)
+                .add(ModItems.HRED_CHESTPLATE)
+                .add(ModItems.HRED_LEGGINGS)
+                .add(ModItems.HRED_BOOTS)
+                .add(ModItems.HGLOW_HELMET)
+                .add(ModItems.HGLOW_CHESTPLATE)
+                .add(ModItems.HGLOW_LEGGINGS)
+                .add(ModItems.HGLOW_BOOTS)
+                .add(ModItems.OBSIDIAN_HELMET)
+                .add(ModItems.OBSIDIAN_CHESTPLATE)
+                .add(ModItems.OBSIDIAN_LEGGINGS)
+                .add(ModItems.OBSIDIAN_BOOTS)
+                .add(ModItems.RGOLD_HELMET)
+                .add(ModItems.RGOLD_CHESTPLATE)
+                .add(ModItems.RGOLD_LEGGINGS)
+                .add(ModItems.RGOLD_BOOTS)
+                .add(ModItems.OVERPOWER_HELMET)
+                .add(ModItems.OVERPOWER_CHESTPLATE)
+                .add(ModItems.OVERPOWER_LEGGINGS)
+                .add(ModItems.OVERPOWER_BOOTS)
+                .add(ModItems.RLAPIS_HELMET)
+                .add(ModItems.RLAPIS_CHESTPLATE)
+                .add(ModItems.RLAPIS_LEGGINGS)
+                .add(ModItems.RLAPIS_BOOTS)
+                .add(ModItems.COAL_HELMET)
+                .add(ModItems.COAL_CHESTPLATE)
+                .add(ModItems.COAL_LEGGINGS)
+                .add(ModItems.COAL_BOOTS)
+                .add(ModItems.FNI_HELMET)
+                .add(ModItems.FNI_CHESTPLATE)
+                .add(ModItems.FNI_LEGGINGS)
+                .add(ModItems.FNI_BOOTS)
+                .add(ModItems.ECTO_HELMET)
+                .add(ModItems.ECTO_CHESTPLATE)
+                .add(ModItems.ECTO_LEGGINGS)
+                .add(ModItems.ECTO_BOOTS);
+
+        // Magnetization addon: tag references external namespace; if Magnetization
+        // isn't installed the tags simply don't resolve.
+        valueLookupBuilder(ModTags.Items.MAGNETIZATION_FERROMAGNETIC)
+                .add(ModItems.RGOLD)
+                .add(ModItems.RAW_RGOLD)
+                .add(ModItems.OBINGOT)
+                .add(ModItems.RLAPIS)
+                .add(ModItems.SEM);
+
+        valueLookupBuilder(ModTags.Items.MAGNETIZATION_METAL_ARMOR)
+                .add(ModItems.COPPER_HELMET)
+                .add(ModItems.COPPER_CHESTPLATE)
+                .add(ModItems.COPPER_LEGGINGS)
+                .add(ModItems.COPPER_BOOTS)
+                .add(ModItems.RGOLD_HELMET)
+                .add(ModItems.RGOLD_CHESTPLATE)
+                .add(ModItems.RGOLD_LEGGINGS)
+                .add(ModItems.RGOLD_BOOTS)
+                .add(ModItems.OBSIDIAN_HELMET)
+                .add(ModItems.OBSIDIAN_CHESTPLATE)
+                .add(ModItems.OBSIDIAN_LEGGINGS)
+                .add(ModItems.OBSIDIAN_BOOTS)
+                .add(ModItems.FNI_HELMET)
+                .add(ModItems.FNI_CHESTPLATE)
+                .add(ModItems.FNI_LEGGINGS)
+                .add(ModItems.FNI_BOOTS)
+                .add(ModItems.RLAPIS_HELMET)
+                .add(ModItems.RLAPIS_CHESTPLATE)
+                .add(ModItems.RLAPIS_LEGGINGS)
+                .add(ModItems.RLAPIS_BOOTS)
+                .add(ModItems.EMERALD_HELMET)
+                .add(ModItems.EMERALD_CHESTPLATE)
+                .add(ModItems.EMERALD_LEGGINGS)
+                .add(ModItems.EMERALD_BOOTS)
+                .add(ModItems.OVERPOWER_HELMET)
+                .add(ModItems.OVERPOWER_CHESTPLATE)
+                .add(ModItems.OVERPOWER_LEGGINGS)
+                .add(ModItems.OVERPOWER_BOOTS);
+
+        valueLookupBuilder(ModTags.Items.MAGNETIZATION_METAL_TOOLS)
+                .add(ModItems.COPPER_SWORD)
+                .add(ModItems.COPPER_PICKAXE)
+                .add(ModItems.COPPER_AXE)
+                .add(ModItems.COPPER_SHOVEL)
+                .add(ModItems.COPPER_HOE)
+                .add(ModItems.RGOLD_SWORD)
+                .add(ModItems.RGOLD_PICKAXE)
+                .add(ModItems.RGOLD_AXE)
+                .add(ModItems.RGOLD_SHOVEL)
+                .add(ModItems.RGOLD_HOE)
+                .add(ModItems.POBSIDIAN_SWORD)
+                .add(ModItems.POBSIDIAN_PICKAXE)
+                .add(ModItems.POBSIDIAN_AXE)
+                .add(ModItems.POBSIDIAN_SHOVEL)
+                .add(ModItems.POBSIDIAN_HOE)
+                .add(ModItems.FNI_SWORD)
+                .add(ModItems.FNI_PICKAXE)
+                .add(ModItems.FNI_AXE)
+                .add(ModItems.FNI_SHOVEL)
+                .add(ModItems.FNI_HOE)
+                .add(ModItems.RRAW_GOLD_SWORD)
+                .add(ModItems.RRAW_GOLD_PICKAXE)
+                .add(ModItems.RRAW_GOLD_AXE)
+                .add(ModItems.RRAW_GOLD_SHOVEL)
+                .add(ModItems.RRAW_GOLD_HOE)
+                .add(ModItems.RRAW_COPPER_SWORD)
+                .add(ModItems.RRAW_COPPER_PICKAXE)
+                .add(ModItems.RRAW_COPPER_AXE)
+                .add(ModItems.RRAW_COPPER_SHOVEL)
+                .add(ModItems.RRAW_COPPER_HOE)
+                .add(ModItems.RRAW_IRON_SWORD)
+                .add(ModItems.RRAW_IRON_PICKAXE)
+                .add(ModItems.RRAW_IRON_AXE)
+                .add(ModItems.RRAW_IRON_SHOVEL)
+                .add(ModItems.RRAW_IRON_HOE)
+                .add(ModItems.RRAW_RGOLD_SWORD)
+                .add(ModItems.RRAW_RGOLD_PICKAXE)
+                .add(ModItems.RRAW_RGOLD_AXE)
+                .add(ModItems.RRAW_RGOLD_SHOVEL)
+                .add(ModItems.RRAW_RGOLD_HOE)
+                .add(ModItems.RSCRAP_SWORD)
+                .add(ModItems.RSCRAP_PICKAXE)
+                .add(ModItems.RSCRAP_AXE)
+                .add(ModItems.RSCRAP_SHOVEL)
+                .add(ModItems.RSCRAP_HOE)
+                .add(ModItems.RLAPIS_SWORD)
+                .add(ModItems.RLAPIS_PICKAXE)
+                .add(ModItems.RLAPIS_AXE)
+                .add(ModItems.RLAPIS_SHOVEL)
+                .add(ModItems.RLAPIS_HOE)
+                .add(ModItems.PEMERALD_SWORD)
+                .add(ModItems.PEMERALD_PICKAXE)
+                .add(ModItems.PEMERALD_AXE)
+                .add(ModItems.PEMERALD_SHOVEL)
+                .add(ModItems.PEMERALD_HOE)
+                .add(ModItems.OVERPOWER_SWORD)
+                .add(ModItems.OVERPOWER_PICKAXE)
+                .add(ModItems.OVERPOWER_AXE)
+                .add(ModItems.OVERPOWER_SHOVEL);
+    }
+}

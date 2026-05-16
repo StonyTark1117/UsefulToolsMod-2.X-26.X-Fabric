@@ -34,7 +34,10 @@ loom {
 			vmArg "-Dfabric.gameMappingNamespace=named"
 		}
 		datagen {
-			inherit server
+			// Inherit client (not server) so client-side providers like the
+			// vanilla ModelProvider — used by FabricModelProvider — can be
+			// classloaded inside the datagen JVM.
+			inherit client
 			name "Data Generation"
 			vmArg "-Dfabric-api.datagen"
 			vmArg "-Dfabric-api.datagen.output-dir=${file("src/main/generated")}"
@@ -118,15 +121,12 @@ dependencies {
 	// Optional at runtime: the compat/modmenu plugin only loads when Mod Menu
 	// is installed (Fabric Loader will skip the entrypoint silently otherwise).
 	//
-	// Mod Menu 19.0.0-alpha.1 pins a stale `fabric-resource-loader-v1` (2.0.10)
-	// in its pom whose MinecraftServer constructor mixin no longer matches MC
-	// 26.1.2's 11-param ctor. Exclude all transitive `net.fabricmc.fabric-api`
-	// modules so the version shipped in our fabric-api meta-jar (0.149.0+26.1.2)
-	// is used instead.
+	// Compile-only: the published 19.0.0-alpha.1 jar declares a hard
+	// `minecraft: ">=26.2-"` dep that Fabric Loader rejects against the
+	// runtime 26.1.2, so the mod can't be loaded in the dev classpath. End
+	// users drop a 26.1.2-compatible Mod Menu build into their `mods/`
+	// folder to surface our screen factory.
 	modCompileOnly("com.terraformersmc:modmenu:${modmenu_version}") {
-		exclude group: 'net.fabricmc.fabric-api'
-	}
-	modLocalRuntime("com.terraformersmc:modmenu:${modmenu_version}") {
 		exclude group: 'net.fabricmc.fabric-api'
 	}
 }

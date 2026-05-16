@@ -122,5 +122,31 @@ both target the same 26.1.2 bytecode. The Fabric-API-side adjustments needed:
 - `event/ModEventBusEvents.java` (split between `FabricDefaultAttributeRegistry`
   in main init and `SpawnPlacements.register` in main init)
 - `worldgen/ModBiomeModifiers.java` (same — code-driven on Fabric)
-- `datagen/Mod{BlockState,BlockLootTable,Recipe,Advancement,BlockTag,ItemTag,ItemModel}Provider.java`
-  and `datagen/ModDatapackEntries.java` (deleted; JSON baked into `src/main/generated/`)
+
+### Datagen providers (2026-05-16, follow-up)
+
+The seven NeoForge-style provider classes that the initial port had dropped
+are now back, ported to Fabric idioms. `./gradlew runDatagen` runs all six
+to completion (~200 ms) and overwrites `src/main/generated/`:
+
+| Provider                      | Fabric base class                     | Notes |
+|-------------------------------|---------------------------------------|-------|
+| `ModBlockLootTableProvider`   | `FabricBlockLootSubProvider`          | 17 `dropSelf` + 4 silk-touch ore drops. Output is missing the cosmetic `random_sequence` field NeoForge sets — runtime-equivalent. |
+| `ModBlockTagProvider`         | `FabricTagsProvider.BlockTagsProvider` | Strict validator on `FabricPackOutput` rejects cross-tag refs to vanilla tags via `addTag(...)`; all such refs use `addOptionalTag(...)` instead. JSON shifts from `"#minecraft:foo"` bare string to `{"id":"...","required":false}`. |
+| `ModItemTagProvider`          | `FabricTagsProvider.ItemTagsProvider`  | TRIMMABLE_ARMOR + Magnetization addon tags. |
+| `ModModelProvider`            | `FabricModelProvider` (client-datagen) | Combines blockstate + item-model halves (NeoForge sibling splits these). `SpectralInfuser` block model + facing/lit blockstate live as hand-authored JSON under `src/main/resources/` — the provider only emits the `items/spectral_infuser.json` dispatcher that points back at the block model, driven directly through `ItemModelGenerators.itemModelOutput` since `declareCustomModelItem` defaults to the `item/...` location. |
+| `ModDatapackEntries`          | `FabricDynamicRegistryProvider`        | Emits `worldgen/configured_feature/*` and `worldgen/placed_feature/*`. Biome modifiers stay code-driven in `ModBiomeModifications`. |
+| `ModRecipeProvider`           | `FabricRecipeProvider` (Runner)        | 681-recipe body ported verbatim; `.get()` bridges stripped via sed. Recipe ids are re-scoped to `usefultoolsmod:` namespace by Fabric (vs. NeoForge keeping `minecraft:ice` etc.) — JSON path drifts but recipe lookup is unaffected. |
+| `ModAdvancementProvider`      | `FabricAdvancementProvider`            | 847-node tree folded into a single class (the sibling's `AdvancementSubProvider` indirection is unnecessary since Fabric exposes `(HolderLookup.Provider, Consumer<AdvancementHolder>)` directly). |
+
+Supporting infrastructure changes:
+
+- `build.gradle` `runs.datagen` switched from `inherit server` to `inherit client` so the client-side `ModelProvider` and friends can be classloaded.
+- `usefultoolsmod.accesswidener` widens `BlockModelGenerators#createTrivialCube`, `ItemModelGenerators#{generateFlatItem,declareCustomModelItem}`, and the private `ItemModelGenerators#itemModelOutput` field — all package-private in 26.1.2.
+- `DataGenerators.buildRegistry` populates the dynamic-registry lookup with `CONFIGURED_FEATURE` and `PLACED_FEATURE` bootstrap methods so `ModDatapackEntries` sees our entries.
+- Mod Menu 19.0.0-alpha.1 demoted from `modLocalRuntime` to `modCompileOnly` only — its hard `minecraft: ">=26.2-"` constraint blocks every client-classpath JVM launch (datagen included). End users install Mod Menu manually for the in-game config screen.
+- `data/minecraft/{advancement,recipe}/` directories present in the imported NeoForge baseline are not regenerated under Fabric (Fabric forces all generated recipes/advancements into the mod-id namespace) — accepted as a structural difference.
+
+### Files dropped vs the NeoForge port (continued)
+
+(none new — the seven provider classes listed above have been restored)

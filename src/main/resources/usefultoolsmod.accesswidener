@@ -3,3 +3,14 @@ accessWidener	v2	named
 # FireBlock.getBurnChance(BlockState) - needed for FNI boots fire mechanic.
 # Mojmap name is net/minecraft/world/level/block/FireBlock.getBurnOdds(BlockState)I
 accessible	method	net/minecraft/world/level/block/FireBlock	getBurnOdds	(Lnet/minecraft/world/level/block/state/BlockState;)I
+
+# Vanilla 26.1.2 made model generator helpers package-private; widen them so
+# our datagen providers can re-emit the assets shipped under src/main/resources.
+accessible	method	net/minecraft/client/data/models/BlockModelGenerators	createTrivialCube	(Lnet/minecraft/world/level/block/Block;)V
+accessible	method	net/minecraft/client/data/models/ItemModelGenerators	generateFlatItem	(Lnet/minecraft/world/item/Item;Lnet/minecraft/client/data/models/model/ModelTemplate;)V
+accessible	method	net/minecraft/client/data/models/ItemModelGenerators	declareCustomModelItem	(Lnet/minecraft/world/item/Item;)V
+# `itemModelOutput` is the underlying ItemModelOutput sink — needed so we can
+# emit a non-default items/<x>.json dispatcher for SpectralInfuser, whose item
+# dispatcher must point at the block model (block/spectral_infuser) rather
+# than the default item/spectral_infuser path declareCustomModelItem produces.
+accessible	field	net/minecraft/client/data/models/ItemModelGenerators	itemModelOutput	Lnet/minecraft/client/data/models/ItemModelOutput;

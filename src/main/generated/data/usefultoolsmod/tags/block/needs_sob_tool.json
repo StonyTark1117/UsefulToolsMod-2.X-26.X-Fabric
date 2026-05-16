@@ -1,6 +1,9 @@
 {
   "values": [
-    "#minecraft:needs_diamond_tool",
+    {
+      "id": "#minecraft:needs_diamond_tool",
+      "required": false
+    },
     "minecraft:bedrock"
   ]
 }

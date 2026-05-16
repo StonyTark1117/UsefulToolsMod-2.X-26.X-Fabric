@@ -1,6 +1,9 @@
 {
   "values": [
-    "#minecraft:incorrect_for_diamond_tool",
+    {
+      "id": "#minecraft:incorrect_for_diamond_tool",
+      "required": false
+    },
     "minecraft:bedrock"
   ]
 }
