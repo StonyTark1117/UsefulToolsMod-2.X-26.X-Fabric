@@ -3,6 +3,7 @@
   "package": "com.stonytark.usefultoolsmod.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "LivingEntityMixin",
     "MobMixin"
   ],
   "client": [],

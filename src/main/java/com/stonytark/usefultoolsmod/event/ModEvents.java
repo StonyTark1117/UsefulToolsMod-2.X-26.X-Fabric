@@ -102,10 +102,12 @@ public class ModEvents {
             ItemTooltipCallback.EVENT.register(ModEvents::onItemTooltip);
         }
 
-        // Living damage — offensive tool effects + defensive armor reactions.
-        ServerLivingEntityEvents.ALLOW_DAMAGE.register(ModEvents::onLivingHurt);
+        // Living damage — offensive tool effects + defensive armor reactions
+        // are handled by LivingEntityMixin (@WrapMethod on hurtServer) so that
+        // setAmount mutations actually propagate. ALLOW_DAMAGE alone is
+        // cancel-only and cannot mutate the damage amount.
 
-        // LivingChangeTargetEvent has no clean Fabric equivalent — see onLivingChangeTarget.
+        // LivingChangeTargetEvent: see MobMixin.
     }
 
     // -----------------------------------------------------------------------
@@ -2041,13 +2043,16 @@ public class ModEvents {
     // Food tool-hit effects + armor reactive events (LivingIncomingDamageEvent)
     // =======================================================================
 
-    // TODO: Fabric port — damage amount mutation may need a mixin if
-    // MODIFY_DAMAGE_AMOUNT callback isn't available in this Fabric API version.
-    // Cancellation works via returning false from ALLOW_DAMAGE. The body below
-    // uses a local adapter (LivingIncomingDamageEvent) so the original NeoForge
-    // logic is preserved verbatim — event.setAmount(...) calls are recorded on
-    // the adapter but cannot currently propagate back to the live damage value.
-    private static boolean onLivingHurt(LivingEntity damaged, DamageSource src, float amount) {
+    /**
+     * Result of running the incoming-damage rules. {@code cancelled} mirrors
+     * the original NeoForge LivingIncomingDamageEvent#isCanceled; {@code amount}
+     * carries forward any setAmount() mutations the rules made. Called from
+     * LivingEntityMixin (which wraps hurtServer to actually use the mutated
+     * amount, something ALLOW_DAMAGE cannot do).
+     */
+    public record IncomingDamageResult(boolean cancelled, float amount) {}
+
+    public static IncomingDamageResult processIncomingDamage(LivingEntity damaged, DamageSource src, float amount) {
         LivingIncomingDamageEvent event = new LivingIncomingDamageEvent(damaged, src, amount);
         DamageSource source = event.getSource();
 
@@ -2245,14 +2250,14 @@ public class ModEvents {
                 attacker.setRemainingFireTicks(60);
             }
         }
-        return !event.isCanceled();
+        return new IncomingDamageResult(event.isCanceled(), event.getAmount());
     }
 
     /**
      * Local adapter that mimics the NeoForge LivingIncomingDamageEvent API.
-     * Allows the original handler body to be preserved verbatim.
-     * Note: setAmount() mutations are NOT propagated back to the underlying
-     * damage value — see the TODO on onLivingHurt above.
+     * Allows the original handler body to be preserved verbatim. setAmount()
+     * and setCanceled() mutations are read back by processIncomingDamage()
+     * and applied via LivingEntityMixin.
      */
     private static final class LivingIncomingDamageEvent {
         private final LivingEntity entity;
