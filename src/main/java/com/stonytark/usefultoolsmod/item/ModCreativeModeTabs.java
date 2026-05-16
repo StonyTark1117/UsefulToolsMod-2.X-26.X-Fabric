@@ -15,7 +15,7 @@ public class ModCreativeModeTabs {
     public static final CreativeModeTab USEFUL_TOOLS_TAB = Registry.register(
             BuiltInRegistries.CREATIVE_MODE_TAB,
             Identifier.fromNamespaceAndPath(UsefultoolsMod.MOD_ID, "useful_tools_tab"),
-            CreativeModeTab.builder().icon(() -> new ItemStack(ModItems.RGOLD))
+            CreativeModeTab.builder(CreativeModeTab.Row.TOP, 0).icon(() -> new ItemStack(ModItems.RGOLD))
                     .title(Component.translatable( "creativetab.usefultoolsmod.useful_tools"))
                     .displayItems((itemDisplayParameters, output) -> {
 

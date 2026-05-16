@@ -3,7 +3,7 @@ package com.stonytark.usefultoolsmod.block.entity;
 import com.stonytark.usefultoolsmod.block.custom.SpectralInfuserBlock;
 import com.stonytark.usefultoolsmod.item.ModItems;
 import com.stonytark.usefultoolsmod.item.custom.EctoplasmInfusionHelper;
-import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
+import net.fabricmc.fabric.api.menu.v1.ExtendedMenuProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
@@ -25,7 +25,7 @@ import net.minecraft.world.level.storage.ValueOutput;
 import org.jetbrains.annotations.Nullable;
 
 public class SpectralInfuserBlockEntity extends BlockEntity
-        implements ExtendedScreenHandlerFactory<BlockPos>, Container {
+        implements ExtendedMenuProvider<BlockPos>, Container {
     private final NonNullList<ItemStack> items = NonNullList.withSize(3, ItemStack.EMPTY);
 
     private int progress = 0;
@@ -129,7 +129,7 @@ public class SpectralInfuserBlockEntity extends BlockEntity
         };
     }
 
-    // ── ExtendedScreenHandlerFactory<BlockPos> ─────────────────────────────
+    // ── ExtendedMenuProvider<BlockPos> ─────────────────────────────────────
 
     @Override
     public Component getDisplayName() {

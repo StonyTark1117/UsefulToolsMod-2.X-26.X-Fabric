@@ -3,12 +3,11 @@
 A Fabric port of [The Useful Tools Mod](https://github.com/StonyTark1117/UsefulToolsMod-2.X-Fabric)
 for Minecraft 26.1.2.
 
-> **Build status (2026-05-16):** Source port is complete, but `./gradlew build`
-> fails at the Loom mapping step because Mojang has not published 26.1.x
-> mappings and yarn has no 26.1.x build yet. See `PORT_HANDOFF.md` for the
-> full diagnosis and unblock plan. The mod's Java sources, assets, datapack
-> JSON, and integrations are all in place and will compile the day mappings
-> ship.
+> **Build status (2026-05-16):** ✅ `./gradlew build` produces a working
+> `usefultoolsmod-2.2.2-26.1.2-fabric.jar`. `./gradlew runServer` reaches
+> `Done (1.576s)!` with the mod loaded alongside 47 Fabric API modules and WTHIT.
+> See `PORT_HANDOFF.md` for the full porting notes — including how the project
+> works around Mojang shipping MC 26.1.x without published mappings.
 
 ## What this mod does
 
@@ -32,11 +31,21 @@ Sweet Berry, …), plus:
 | Cloth Config | `me.shedaniel.cloth:cloth-config-fabric:26.1.154` | `>= 26.1.0` |
 | JER (Just Enough Resources) | _no Fabric 26.1.x build available_ | excluded from compile |
 
-## How to build (once mappings ship)
+## How to build
 
 ```bash
 JAVA_HOME=/path/to/jdk-25 ./gradlew build
 # output: build/libs/usefultoolsmod-2.2.2-26.1.2-fabric.jar
+```
+
+Java 25 is required because MC 26.1.2 class files are major version 25. Java 26
+also works. The Gradle wrapper handles the rest of the toolchain.
+
+## How to test in dev
+
+```bash
+JAVA_HOME=/path/to/jdk-25 ./gradlew runServer
+# accept the EULA on first launch (creates run/eula.txt)
 ```
 
 ## License

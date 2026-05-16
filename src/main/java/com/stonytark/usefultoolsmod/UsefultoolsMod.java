@@ -41,7 +41,8 @@ public class UsefultoolsMod implements ModInitializer {
         // happens at class-init time, so calling the no-op register() methods
         // just force-loads the class.
         ModCreativeModeTabs.register();
-        ModArmorMaterials.register();
+        // ModArmorMaterials and ModToolTiers are plain constants — no register() needed;
+        // they get class-loaded when ModItems references them.
         ModEntities.register();
         ModItems.register();
         ModBlocks.register();

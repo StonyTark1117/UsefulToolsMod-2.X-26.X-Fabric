@@ -24,6 +24,15 @@ loom {
 	accessWidenerPath = file("src/main/resources/usefultoolsmod.accesswidener")
 
 	runs {
+		// MC 26.1.x is shipped already-mojmapped, so the runtime classes are in the
+		// `named` namespace, not the historical `intermediary` namespace Fabric Loader
+		// assumes by default. Tell Loader explicitly via the system property so its
+		// classTweaker reader stops rejecting `named`-declared access wideners shipped
+		// by fabric-* modules.
+		configureEach {
+			vmArg "-Dfabric.runtimeMappingNamespace=named"
+			vmArg "-Dfabric.gameMappingNamespace=named"
+		}
 		datagen {
 			inherit server
 			name "Data Generation"
@@ -79,7 +88,15 @@ repositories {
 
 dependencies {
 	minecraft "com.mojang:minecraft:${minecraft_version}"
-	mappings loom.officialMojangMappings()
+	// MC 26.1.x is shipped unobfuscated by Mojang — the published client.jar already
+	// contains classes with their final names like net.minecraft.world.level.block.Block.
+	// There is no client_mappings.txt to download (the version manifest only lists
+	// `client` and `server`), and `loom.officialMojangMappings()` fails accordingly.
+	// FabricMC publishes a 572-byte stub intermediary jar for these versions
+	// (mappings.tiny is just the `v1 official intermediary` header) under the
+	// placeholder version "0.0.0" — using it from a local file bypasses gradle's
+	// inconsistent-pom-metadata check.
+	mappings files("libs/intermediary-26.1.2-v2.jar")
 	modImplementation "net.fabricmc:fabric-loader:${loader_version}"
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_api_version}"
 
