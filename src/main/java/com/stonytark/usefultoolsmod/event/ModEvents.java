@@ -510,17 +510,7 @@ public class ModEvents {
     // Kill-switch: drop any Ghost that would finalize when ghosts are disabled.
     // Natural-spawn rate is enforced by GhostEntity.checkGhostSpawnRules, which
     // only runs for natural spawning — spawn eggs / /summon / breeding bypass it.
-    // TODO: Fabric port — FinalizeSpawnEvent has no clean equivalent; the
-    // original logic is preserved below in a commented-out block. Recreate
-    // via a mixin on Mob#finalizeSpawn if needed.
-    /*
-    private static void onFinalizeSpawn(FinalizeSpawnEvent event) {
-        if (!(event.getEntity() instanceof GhostEntity)) return;
-        if (!Config.ghostEnabled) {
-            event.setSpawnCancelled(true);
-        }
-    }
-    */
+    // Implemented on Fabric via MobMixin.usefultoolsmod$cancelDisabledGhost.
 
     // -----------------------------------------------------------------------
     // Furnace fuel values for coal items
@@ -1810,7 +1800,7 @@ public class ModEvents {
         return !s.isEmpty() && (s.is(ModItems.ROTTEN_FLESH_SWORD) || s.is(ModItems.ROTTEN_FLESH_PICKAXE)
             || s.is(ModItems.ROTTEN_FLESH_SHOVEL) || s.is(ModItems.ROTTEN_FLESH_AXE) || s.is(ModItems.ROTTEN_FLESH_HOE));
     }
-    private static boolean isRottenFleshArmor(ItemStack s) {
+    public static boolean isRottenFleshArmor(ItemStack s) {
         return matchesArmorSet(s, ModItems.ROTTEN_FLESH_HELMET, ModItems.ROTTEN_FLESH_CHESTPLATE,
                 ModItems.ROTTEN_FLESH_LEGGINGS, ModItems.ROTTEN_FLESH_BOOTS);
     }
@@ -1834,7 +1824,7 @@ public class ModEvents {
         return !s.isEmpty() && (s.is(ModItems.PUMPKIN_PIE_SWORD) || s.is(ModItems.PUMPKIN_PIE_PICKAXE)
             || s.is(ModItems.PUMPKIN_PIE_SHOVEL) || s.is(ModItems.PUMPKIN_PIE_AXE) || s.is(ModItems.PUMPKIN_PIE_HOE));
     }
-    private static boolean isPumpkinPieArmor(ItemStack s) {
+    public static boolean isPumpkinPieArmor(ItemStack s) {
         return matchesArmorSet(s, ModItems.PUMPKIN_PIE_HELMET, ModItems.PUMPKIN_PIE_CHESTPLATE,
                 ModItems.PUMPKIN_PIE_LEGGINGS, ModItems.PUMPKIN_PIE_BOOTS);
     }
@@ -1879,7 +1869,7 @@ public class ModEvents {
                 ModItems.GOLDEN_APPLE_LEGGINGS, ModItems.GOLDEN_APPLE_BOOTS);
     }
 
-    private static boolean isWearingFullSet(Player player, java.util.function.Predicate<ItemStack> check) {
+    public static boolean isWearingFullSet(Player player, java.util.function.Predicate<ItemStack> check) {
         return check.test(player.getItemBySlot(EquipmentSlot.HEAD))
             && check.test(player.getItemBySlot(EquipmentSlot.CHEST))
             && check.test(player.getItemBySlot(EquipmentSlot.LEGS))
@@ -2288,87 +2278,10 @@ public class ModEvents {
     // Targeting events (LivingChangeTargetEvent)
     // =======================================================================
 
-    // TODO: Fabric port — no equivalent for LivingChangeTargetEvent. Recreate
-    // via a mixin on Mob#setTarget if needed. Original body preserved below
-    // in a commented-out block.
-    /*
-    private static void onLivingChangeTarget(LivingChangeTargetEvent event) {
-        if (!(event.getNewAboutToBeSetTarget() instanceof Player player)) return;
-
-        // Rotten Flesh full set — undead mobs ignore player
-        if (Config.rottenFleshEnabled && Config.rottenFleshUndeadNeutral
-                && isWearingFullSet(player, ModEvents::isRottenFleshArmor)) {
-            if (event.getEntity() instanceof Zombie || event.getEntity() instanceof AbstractSkeleton
-                    || event.getEntity() instanceof Phantom) {
-                event.setCanceled(true);
-                return;
-            }
-        }
-
-        // Pumpkin Pie helmet — endermen ignore player
-        if (Config.pumpkinPieEnabled && Config.pumpkinPieEndermanAvoidance
-                && isPumpkinPieArmor(player.getItemBySlot(EquipmentSlot.HEAD))) {
-            if (event.getEntity() instanceof EnderMan) {
-                event.setCanceled(true);
-            }
-        }
-
-        // Bone helmet — undead reduced detection
-        if (Config.boneEnabled && Config.boneEffects
-                && isBoneArmor(player.getItemBySlot(EquipmentSlot.HEAD))) {
-            if ((event.getEntity() instanceof Zombie || event.getEntity() instanceof AbstractSkeleton)
-                    && event.getEntity().distanceTo(player) > 16) {
-                event.setCanceled(true);
-                return;
-            }
-        }
-
-        // Phantom membrane full set — phantoms ignore
-        if (Config.phantomEnabled && Config.phantomEffects
-                && isWearingFullSet(player, ModEvents::isPhantomArmor)) {
-            if (event.getEntity() instanceof Phantom) {
-                event.setCanceled(true);
-                return;
-            }
-        }
-
-        // Nautilus full set — aquatic mobs ignore
-        if (Config.nautilusEnabled && Config.nautilusEffects
-                && isWearingFullSet(player, ModEvents::isNautilusArmor)) {
-            if (event.getEntity() instanceof Guardian || event.getEntity() instanceof Drowned) {
-                event.setCanceled(true);
-                return;
-            }
-        }
-
-        // Eye of Ender full set — endermen neutral
-        if (Config.eyeOfEnderEnabled && Config.eyeOfEnderEffects
-                && isWearingFullSet(player, ModEvents::isEyeOfEnderArmor)) {
-            if (event.getEntity() instanceof EnderMan) {
-                event.setCanceled(true);
-                return;
-            }
-        }
-
-        // Echo Shard full set — warden neutral
-        if (Config.echoShardEnabled && Config.echoShardEffects
-                && isWearingFullSet(player, ModEvents::isEchoShardArmor)) {
-            if (event.getEntity() instanceof Warden) {
-                event.setCanceled(true);
-                return;
-            }
-        }
-
-        // Turtle Scute full set — guardians ignore
-        if (Config.turtleScuteEnabled && Config.turtleScuteEffects
-                && isWearingFullSet(player, ModEvents::isTurtleScuteArmor)) {
-            if (event.getEntity() instanceof Guardian) {
-                event.setCanceled(true);
-                return;
-            }
-        }
-    }
-    */
+    // Armor-based mob-passivation rules (rotten flesh / pumpkin pie / bone /
+    // phantom / nautilus / eye-of-ender / echo shard / turtle scute) are
+    // implemented on Fabric via MobMixin.usefultoolsmod$armorPassivates,
+    // since ServerLivingEntityEvents has no setTarget equivalent.
 
     // =======================================================================
     // Utility — random teleport
@@ -2437,7 +2350,7 @@ public class ModEvents {
     private static boolean isBoneTool(ItemStack s) {
         return !s.isEmpty() && (s.is(ModItems.BONE_SWORD) || s.is(ModItems.BONE_PICKAXE) || s.is(ModItems.BONE_SHOVEL) || s.is(ModItems.BONE_AXE) || s.is(ModItems.BONE_HOE));
     }
-    private static boolean isBoneArmor(ItemStack s) {
+    public static boolean isBoneArmor(ItemStack s) {
         return matchesArmorSet(s, ModItems.BONE_HELMET, ModItems.BONE_CHESTPLATE,
                 ModItems.BONE_LEGGINGS, ModItems.BONE_BOOTS);
     }
@@ -2459,7 +2372,7 @@ public class ModEvents {
     private static boolean isPhantomTool(ItemStack s) {
         return !s.isEmpty() && (s.is(ModItems.PHANTOM_SWORD) || s.is(ModItems.PHANTOM_PICKAXE) || s.is(ModItems.PHANTOM_SHOVEL) || s.is(ModItems.PHANTOM_AXE) || s.is(ModItems.PHANTOM_HOE));
     }
-    private static boolean isPhantomArmor(ItemStack s) {
+    public static boolean isPhantomArmor(ItemStack s) {
         return matchesArmorSet(s, ModItems.PHANTOM_HELMET, ModItems.PHANTOM_CHESTPLATE,
                 ModItems.PHANTOM_LEGGINGS, ModItems.PHANTOM_BOOTS);
     }
@@ -2487,7 +2400,7 @@ public class ModEvents {
     private static boolean isNautilusTool(ItemStack s) {
         return !s.isEmpty() && (s.is(ModItems.NAUTILUS_SWORD) || s.is(ModItems.NAUTILUS_PICKAXE) || s.is(ModItems.NAUTILUS_SHOVEL) || s.is(ModItems.NAUTILUS_AXE) || s.is(ModItems.NAUTILUS_HOE));
     }
-    private static boolean isNautilusArmor(ItemStack s) {
+    public static boolean isNautilusArmor(ItemStack s) {
         return matchesArmorSet(s, ModItems.NAUTILUS_HELMET, ModItems.NAUTILUS_CHESTPLATE,
                 ModItems.NAUTILUS_LEGGINGS, ModItems.NAUTILUS_BOOTS);
     }
@@ -2508,7 +2421,7 @@ public class ModEvents {
     private static boolean isEyeOfEnderTool(ItemStack s) {
         return !s.isEmpty() && (s.is(ModItems.EYE_OF_ENDER_SWORD) || s.is(ModItems.EYE_OF_ENDER_PICKAXE) || s.is(ModItems.EYE_OF_ENDER_SHOVEL) || s.is(ModItems.EYE_OF_ENDER_AXE) || s.is(ModItems.EYE_OF_ENDER_HOE));
     }
-    private static boolean isEyeOfEnderArmor(ItemStack s) {
+    public static boolean isEyeOfEnderArmor(ItemStack s) {
         return matchesArmorSet(s, ModItems.EYE_OF_ENDER_HELMET, ModItems.EYE_OF_ENDER_CHESTPLATE,
                 ModItems.EYE_OF_ENDER_LEGGINGS, ModItems.EYE_OF_ENDER_BOOTS);
     }
@@ -2519,14 +2432,14 @@ public class ModEvents {
         return matchesArmorSet(s, ModItems.SHULKER_HELMET, ModItems.SHULKER_CHESTPLATE,
                 ModItems.SHULKER_LEGGINGS, ModItems.SHULKER_BOOTS);
     }
-    private static boolean isTurtleScuteArmor(ItemStack s) {
+    public static boolean isTurtleScuteArmor(ItemStack s) {
         return matchesArmorSet(s, ModItems.TURTLE_SCUTE_HELMET, ModItems.TURTLE_SCUTE_CHESTPLATE,
                 ModItems.TURTLE_SCUTE_LEGGINGS, ModItems.TURTLE_SCUTE_BOOTS);
     }
     private static boolean isEchoShardTool(ItemStack s) {
         return !s.isEmpty() && (s.is(ModItems.ECHO_SHARD_SWORD) || s.is(ModItems.ECHO_SHARD_PICKAXE) || s.is(ModItems.ECHO_SHARD_SHOVEL) || s.is(ModItems.ECHO_SHARD_AXE) || s.is(ModItems.ECHO_SHARD_HOE));
     }
-    private static boolean isEchoShardArmor(ItemStack s) {
+    public static boolean isEchoShardArmor(ItemStack s) {
         return matchesArmorSet(s, ModItems.ECHO_SHARD_HELMET, ModItems.ECHO_SHARD_CHESTPLATE,
                 ModItems.ECHO_SHARD_LEGGINGS, ModItems.ECHO_SHARD_BOOTS);
     }

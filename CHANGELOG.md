@@ -57,9 +57,14 @@ The port works around this with three steps documented in `PORT_HANDOFF.md`:
 - `ModConfigSpec` (TOML) → `java.util.Properties` (`config/usefultoolsmod.properties`).
 - 10 NeoForge event handlers in `ModEvents` ported to Fabric callbacks
   (`ServerTickEvents`, `ServerEntityEvents`, `ServerLivingEntityEvents`,
-  `UseBlockCallback`, `ItemTooltipCallback`, `FuelValueEvents`). Two events
-  (`FinalizeSpawnEvent`, `LivingChangeTargetEvent`) have no Fabric equivalent
-  and are preserved as commented blocks with mixin TODOs.
+  `UseBlockCallback`, `ItemTooltipCallback`, `FuelValueEvents`). The two
+  events that have no Fabric equivalent (`FinalizeSpawnEvent`,
+  `LivingChangeTargetEvent`) are restored via `MobMixin` — a HEAD-injection
+  mixin on `Mob#finalizeSpawn` (discards `GhostEntity` when
+  `Config.ghostEnabled = false`) and on `Mob#setTarget(LivingEntity)`
+  (cancels target-set when the player wears a passifying armor set:
+  rotten flesh / pumpkin pie / bone / phantom / nautilus / eye-of-ender /
+  echo shard / turtle scute). Wired via `usefultoolsmod.mixins.json`.
 - `IConfigScreenFactory` (NeoForge in-game-config-screen extension point) → no-op
   on Fabric; Cloth Config screen still compiles, but exposing it would require
   a Mod Menu entrypoint (not currently wired). Users edit

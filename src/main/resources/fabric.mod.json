@@ -36,7 +36,9 @@
 		]
 	},
 	"accessWidener": "usefultoolsmod.accesswidener",
-	"mixins": [],
+	"mixins": [
+		"usefultoolsmod.mixins.json"
+	],
 	"depends": {
 		"fabricloader": ">=${loader_version}",
 		"fabric-api": "*",

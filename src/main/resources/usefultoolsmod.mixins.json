@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "com.stonytark.usefultoolsmod.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "MobMixin"
+  ],
+  "client": [],
+  "server": [],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
