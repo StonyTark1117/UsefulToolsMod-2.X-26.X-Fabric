@@ -1,0 +1,5 @@
+accessWidener	v2	named
+
+# FireBlock.getBurnChance(BlockState) - needed for FNI boots fire mechanic.
+# Mojmap name is net/minecraft/world/level/block/FireBlock.getBurnOdds(BlockState)I
+accessible	method	net/minecraft/world/level/block/FireBlock	getBurnOdds	(Lnet/minecraft/world/level/block/state/BlockState;)I

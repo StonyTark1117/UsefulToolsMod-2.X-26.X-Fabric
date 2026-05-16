@@ -1,0 +1,52 @@
+{
+	"schemaVersion": 1,
+	"id": "${mod_id}",
+	"version": "${mod_version}",
+	"name": "${mod_name}",
+	"description": "${mod_description}",
+	"authors": [
+		"${mod_authors}"
+	],
+	"contact": {
+		"homepage": "https://github.com/StonyTark1117/UsefulToolsMod-2.X-26.X-Fabric",
+		"sources": "https://github.com/StonyTark1117/UsefulToolsMod-2.X-26.X-Fabric",
+		"issues": "https://github.com/StonyTark1117/UsefulToolsMod-2.X-26.X-Fabric/issues"
+	},
+	"license": "${mod_license}",
+	"icon": "assets/usefultoolsmod/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"com.stonytark.usefultoolsmod.UsefultoolsMod"
+		],
+		"client": [
+			"com.stonytark.usefultoolsmod.UsefultoolsModClient"
+		],
+		"fabric-datagen": [
+			"com.stonytark.usefultoolsmod.datagen.DataGenerators"
+		],
+		"jei_mod_plugin": [
+			"com.stonytark.usefultoolsmod.compat.jei.UsefulToolsJeiPlugin"
+		],
+		"wthit": [
+			"com.stonytark.usefultoolsmod.compat.wthit.UsefulToolsWthitPlugin"
+		],
+		"wthit-client": [
+			"com.stonytark.usefultoolsmod.compat.wthit.UsefulToolsWthitClientPlugin"
+		]
+	},
+	"accessWidener": "usefultoolsmod.accesswidener",
+	"mixins": [],
+	"depends": {
+		"fabricloader": ">=${loader_version}",
+		"fabric-api": "*",
+		"minecraft": "${minecraft_version_range}",
+		"java": ">=25"
+	},
+	"suggests": {
+		"wthit": "*",
+		"jei": "*",
+		"cloth-config": "*"
+	},
+	"custom": {}
+}
