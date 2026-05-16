@@ -179,7 +179,7 @@ public class HideBehindAdultGoal extends Goal {
 
             for (int dy = -1; dy <= 1; dy++) {
                 BlockPos check = base.above(dy);
-                if (level.getBlockState(check).isSolid()) {
+                if (level.getBlockState(check).isCollisionShapeFullBlock(level, check)) {
                     // Position 1.5 blocks past the solid block in the flee direction
                     Vec3 coverPos = Vec3.atCenterOf(check).add(fleeDir.scale(COVER_OFFSET));
                     return coverPos;

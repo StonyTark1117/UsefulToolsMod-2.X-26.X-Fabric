@@ -11,7 +11,7 @@ import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
-import mezz.jei.api.recipe.RecipeType;
+import mezz.jei.api.recipe.types.IRecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 // 1.21.6+: net.minecraft.client.gui.GuiGraphics was renamed to GuiGraphicsExtractor.
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -22,8 +22,8 @@ import org.jetbrains.annotations.Nullable;
 
 public class SpectralInfuserRecipeCategory implements IRecipeCategory<SpectralInfuserRecipe> {
 
-    public static final RecipeType<SpectralInfuserRecipe> TYPE =
-            new RecipeType<>(Identifier.fromNamespaceAndPath(UsefultoolsMod.MOD_ID, "spectral_infusion"),
+    public static final IRecipeType<SpectralInfuserRecipe> TYPE =
+            IRecipeType.create(Identifier.fromNamespaceAndPath(UsefultoolsMod.MOD_ID, "spectral_infusion"),
                     SpectralInfuserRecipe.class);
 
     private static final Identifier TEXTURE =
@@ -43,7 +43,7 @@ public class SpectralInfuserRecipeCategory implements IRecipeCategory<SpectralIn
     }
 
     @Override
-    public RecipeType<SpectralInfuserRecipe> getRecipeType() {
+    public IRecipeType<SpectralInfuserRecipe> getRecipeType() {
         return TYPE;
     }
 
@@ -79,14 +79,14 @@ public class SpectralInfuserRecipeCategory implements IRecipeCategory<SpectralIn
         // Weapon input — position relative to the background crop (43,14 offset from full texture)
         // Full texture: slot at (56,17) → relative: (56-43, 17-14) = (13, 3)
         builder.addSlot(RecipeIngredientRole.INPUT, 13, 3)
-                .addItemStack(recipe.weaponInput());
+                .add(recipe.weaponInput());
 
         // Ectoplasm fuel — full texture: (56,53) → relative: (13, 39)
         builder.addSlot(RecipeIngredientRole.INPUT, 13, 39)
-                .addItemStack(recipe.ectoplasmFuel());
+                .add(recipe.ectoplasmFuel());
 
         // Output — full texture: (116,35) → relative: (73, 21)
         builder.addSlot(RecipeIngredientRole.OUTPUT, 73, 21)
-                .addItemStack(recipe.output());
+                .add(recipe.output());
     }
 }

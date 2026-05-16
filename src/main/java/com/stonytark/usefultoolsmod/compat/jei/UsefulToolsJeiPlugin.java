@@ -57,7 +57,7 @@ public class UsefulToolsJeiPlugin implements IModPlugin {
 
     @Override
     public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
-        registration.addRecipeCatalyst(new ItemStack(ModBlocks.SPECTRAL_INFUSER),
-                SpectralInfuserRecipeCategory.TYPE);
+        registration.addCraftingStation(SpectralInfuserRecipeCategory.TYPE,
+                new ItemStack(ModBlocks.SPECTRAL_INFUSER));
     }
 }

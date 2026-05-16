@@ -6,8 +6,21 @@ Initial Fabric port targeting Minecraft 26.1.2. Forked from the 1.21.1 Fabric
 port (`UsefulToolsMod-2.X-Fabric`) and the 26.1.2 NeoForge sibling port
 (`UsefulToolsMod-2.X-26.X-Neoforge`).
 
-**Status:** `./gradlew build` succeeds; `./gradlew runServer` reaches
-`Done (1.576s)!` with the mod loaded.
+**Status:** `./gradlew build` succeeds with zero compile warnings;
+`./gradlew runServer` reaches `Done (1.576s)!` with the mod loaded.
+
+### Deprecation cleanup pass
+
+`build.gradle` now sets `options.deprecation = true` on all `JavaCompile`
+tasks, so javac reports every deprecated-API call site by file:line. The
+following call-site swaps eliminated all 11 outstanding warnings:
+
+- `mezz.jei.api.recipe.RecipeType<T>` (class) → `mezz.jei.api.recipe.types.IRecipeType<T>` (interface, factory `IRecipeType.create(Identifier, Class)`).
+- JEI `IIngredientAcceptor#addItemStack(ItemStack)` → the non-deprecated `add(ItemStack)` overload.
+- JEI `IRecipeCatalystRegistration#addRecipeCatalyst(ItemStack, IRecipeType...)` → `addCraftingStation(IRecipeType, ItemStack...)` (the only non-deprecated catalyst method).
+- Fabric `EntityRendererRegistry.register(...)` → vanilla `EntityRenderers.register(...)` (Fabric Transitive Access Wideners v1 opens vanilla's private method, removing the need for the wrapper).
+- `BlockState#isSolid()` (used for cover-blocking line-of-sight check) → `isCollisionShapeFullBlock(level, pos)`.
+- `Entity#hurt(DamageSource, float)` → `hurtServer((ServerLevel) entity.level(), source, amount)` at all 6 call sites; `hurtOrSimulate` is itself deprecated and not a viable replacement.
 
 ### Mapping-resolution workaround (the interesting part)
 

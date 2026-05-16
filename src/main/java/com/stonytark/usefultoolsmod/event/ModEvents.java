@@ -416,7 +416,7 @@ public class ModEvents {
 
         // Once per second: damage player and drain item durability
         if (player.tickCount % 20 == 0) {
-            player.hurt(player.damageSources().inFire(), 0.5f);
+            player.hurtServer((ServerLevel) player.level(), player.damageSources().inFire(), 0.5f);
 
             if (mainBurning) {
                 main.hurtAndBreak(2, player, EquipmentSlot.MAINHAND);
@@ -486,7 +486,7 @@ public class ModEvents {
 
         // Damage player and drain durability once per second
         if (player.tickCount % 20 == 0) {
-            player.hurt(player.damageSources().inFire(), 0.5f);
+            player.hurtServer((ServerLevel) player.level(), player.damageSources().inFire(), 0.5f);
             for (EquipmentSlot slot : ARMOR_SLOTS) {
                 ItemStack piece = player.getItemBySlot(slot);
                 if (isCoalArmor(piece) && CoalBurningHelper.isBurning(piece)) {
@@ -2102,7 +2102,7 @@ public class ModEvents {
                 if (held.getDamageValue() >= held.getMaxDamage() - 1 && attacker.level() instanceof ServerLevel sl) {
                     for (LivingEntity nearby : sl.getEntitiesOfClass(LivingEntity.class,
                             attacker.getBoundingBox().inflate(3.0), e -> e != attacker)) {
-                        nearby.hurt(attacker.damageSources().playerAttack(attacker), 3.0f);
+                        nearby.hurtServer(sl, attacker.damageSources().playerAttack(attacker), 3.0f);
                     }
                     sl.sendParticles(ParticleTypes.CRIT, attacker.getX(), attacker.getY() + 1, attacker.getZ(), 20, 1, 1, 1, 0.2);
                 }
@@ -2187,7 +2187,7 @@ public class ModEvents {
             // Sweet Berry thorns
             if (Config.sweetBerryEnabled && Config.sweetBerryThorns
                     && isWearingFullSet(victim, ModEvents::isSweetBerryArmor)) {
-                attacker.hurt(victim.damageSources().thorns(victim), 1.0f);
+                attacker.hurtServer((ServerLevel) attacker.level(), victim.damageSources().thorns(victim), 1.0f);
             }
             // Honey sticky — attacker gets Slowness II
             if (Config.honeyEnabled && Config.honeySticky
@@ -2208,7 +2208,7 @@ public class ModEvents {
                 for (EquipmentSlot slot : new EquipmentSlot[]{EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET})
                     if (isCactusArmor(victim.getItemBySlot(slot))) cactusPieces++;
                 if (cactusPieces > 0)
-                    attacker.hurt(victim.damageSources().thorns(victim), cactusPieces * 0.5f);
+                    attacker.hurtServer((ServerLevel) attacker.level(), victim.damageSources().thorns(victim), cactusPieces * 0.5f);
             }
             if (Config.netherBrickEnabled && Config.netherBrickEffects
                     && isWearingFullSet(victim, ModEvents::isNetherBrickArmor)) {
@@ -2597,7 +2597,7 @@ public class ModEvents {
         if (!(player.level() instanceof ServerLevel sl)) return;
         for (LivingEntity mob : sl.getEntitiesOfClass(LivingEntity.class,
                 player.getBoundingBox().inflate(2.0), e -> e != player && e instanceof Mob)) {
-            mob.hurt(player.damageSources().thorns(player), 1.0f);
+            mob.hurtServer(sl, player.damageSources().thorns(player), 1.0f);
         }
     }
 
