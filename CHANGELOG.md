@@ -72,10 +72,18 @@ The port works around this with three steps documented in `PORT_HANDOFF.md`:
     `LivingEntity#hurtServer` to invoke `ModEvents.processIncomingDamage`,
     cancel via early `return false`, or forward the modified amount to
     the original.
-- `IConfigScreenFactory` (NeoForge in-game-config-screen extension point) → no-op
-  on Fabric; Cloth Config screen still compiles, but exposing it would require
-  a Mod Menu entrypoint (not currently wired). Users edit
-  `config/usefultoolsmod.properties` directly.
+- `IConfigScreenFactory` (NeoForge in-game-config-screen extension point) →
+  Mod Menu `ConfigScreenFactory` via the `modmenu` entrypoint pointing at
+  `compat/modmenu/UsefulToolsModMenuPlugin`. The existing Cloth Config screen
+  (`client/UsefulToolsConfigScreen`) is now reachable from Mod Menu's mod-list
+  page when Mod Menu is installed. Mod Menu 19.0.0-alpha.1 is the only build
+  currently targeting MC 26.1.x; its pom transitively pins a stale
+  `fabric-resource-loader-v1` (2.0.10+11e1c9a34e) whose `MinecraftServer`
+  ctor mixin no longer matches MC 26.1.2's 11-param constructor, so all
+  `net.fabricmc.fabric-api` transitive deps are excluded in `build.gradle`
+  to keep the fabric-api meta-jar's version (also 2.0.10, qualifier
+  7c44c7324c) authoritative. Users still edit
+  `config/usefultoolsmod.properties` directly when Mod Menu is absent.
 - Datagen providers (8 classes) dropped; the pre-generated JSON they produced
   ships under `src/main/generated/` so the mod is self-contained.
 - Compat plugins (JEI / WTHIT) are platform-agnostic. JEI uses the standard

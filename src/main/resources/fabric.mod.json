@@ -33,6 +33,9 @@
 		],
 		"wthit-client": [
 			"com.stonytark.usefultoolsmod.compat.wthit.UsefulToolsWthitClientPlugin"
+		],
+		"modmenu": [
+			"com.stonytark.usefultoolsmod.compat.modmenu.UsefulToolsModMenuPlugin"
 		]
 	},
 	"accessWidener": "usefultoolsmod.accesswidener",
@@ -48,7 +51,8 @@
 	"suggests": {
 		"wthit": "*",
 		"jei": "*",
-		"cloth-config": "*"
+		"cloth-config": "*",
+		"modmenu": "*"
 	},
 	"custom": {}
 }
