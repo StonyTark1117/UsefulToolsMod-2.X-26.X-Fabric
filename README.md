@@ -22,6 +22,15 @@ Sweet Berry, …), plus:
 - Worldgen: 3 Ferrous Gold ore variants (overworld / nether / end deepslate)
 - Fully toggleable per-set via `config/usefultoolsmod.properties`
 
+## Requirements
+
+| | |
+|---|---|
+| Minecraft | **26.1.2** |
+| Fabric Loader | **0.19.2+** |
+| Fabric API | **0.149.0+26.1.2** (hard requirement — the mod will not load without it) |
+| Java | 25 or newer |
+
 ## Integrations (all optional)
 
 | Mod | Dev version | Runtime range |
