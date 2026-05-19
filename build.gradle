@@ -120,13 +120,13 @@ dependencies {
 	// Mod Menu — exposes our Cloth Config screen on the mod list page.
 	// Optional at runtime: the compat/modmenu plugin only loads when Mod Menu
 	// is installed (Fabric Loader will skip the entrypoint silently otherwise).
-	//
-	// Compile-only: the published 19.0.0-alpha.1 jar declares a hard
-	// `minecraft: ">=26.2-"` dep that Fabric Loader rejects against the
-	// runtime 26.1.2, so the mod can't be loaded in the dev classpath. End
-	// users drop a 26.1.2-compatible Mod Menu build into their `mods/`
-	// folder to surface our screen factory.
+	// fabric-api transitives are excluded so Mod Menu's stale pin
+	// (fabric-resource-loader-v1 2.0.10+11e1c9a34e) doesn't override the
+	// fabric-api meta-jar's authoritative versions.
 	modCompileOnly("com.terraformersmc:modmenu:${modmenu_version}") {
+		exclude group: 'net.fabricmc.fabric-api'
+	}
+	modLocalRuntime("com.terraformersmc:modmenu:${modmenu_version}") {
 		exclude group: 'net.fabricmc.fabric-api'
 	}
 }

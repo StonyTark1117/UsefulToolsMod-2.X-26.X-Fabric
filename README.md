@@ -29,7 +29,12 @@ Sweet Berry, …), plus:
 | JEI (Just Enough Items) | `mezz.jei:jei-26.1.2-fabric:29.5.0.28` | `>= 29.0.0` |
 | WTHIT (What The Heck Is That) | `mcp.mobius.waila:wthit:fabric-19.0.0` | `>= 19.0.0` |
 | Cloth Config | `me.shedaniel.cloth:cloth-config-fabric:26.1.154` | `>= 26.1.0` |
+| Mod Menu | `com.terraformersmc:modmenu:18.0.0-alpha.8` | `>= 18.0.0-alpha.8` (19.x requires MC ≥ 26.2) |
 | JER (Just Enough Resources) | _no Fabric 26.1.x build available_ | excluded from compile |
+
+Cloth Config builds the actual config screen; Mod Menu adds the "Config"
+button on the in-game mods list that opens it. Without Mod Menu, users edit
+`config/usefultoolsmod.properties` directly.
 
 ## How to build
 
