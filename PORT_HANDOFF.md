@@ -1,11 +1,14 @@
 # UsefulToolsMod 1.21.1 Fabric → 26.1.2 Fabric Port — Handoff
 
-> **Status (2026-05-16):** `./gradlew build` produces a working
-> `usefultoolsmod-2.2.2-26.1.2-fabric.jar`, and `./gradlew runServer` reaches
-> `[Server thread/INFO] (Minecraft) Done (1.576s)! For help, type "help"` with the
-> mod loaded alongside 47 Fabric API modules and WTHIT. The Spectral Infuser GUI,
-> JEI plugin, Cloth Config screen, all 633 items, 21 blocks, 2 entities, and the
-> ghost spawn rules are wired and pass mod-load validation.
+> **Status (2026-05-18):** `./gradlew build` produces a working
+> `usefultoolsmod-2.2.2-26.1.2-fabric.jar` with zero compile warnings.
+> `./gradlew runServer` reaches `Done (0.145s)!` with the mod loaded alongside
+> 47 Fabric API modules and WTHIT. `./gradlew runDatagen` runs all 7 providers
+> in ~200 ms and overwrites `src/main/generated/` to match the NeoForge baseline
+> modulo 4 runtime-equivalent JSON drifts (see CHANGELOG). The Spectral Infuser
+> GUI, JEI plugin, Cloth Config + Mod Menu screen, all 633 items, 21 blocks,
+> 2 entities, ghost spawn rules, and the FinalizeSpawn / ChangeTarget /
+> setAmount behavior mixins are wired and pass mod-load validation.
 
 ## Build environment
 
@@ -91,25 +94,33 @@ without publishing a mappings file (i.e. 26.1.x and presumably 26.2+).
 | Area | Status |
 |---|---|
 | Build infrastructure | ✅ `build.gradle`, `gradle.properties`, `settings.gradle`, `gradlew`, wrapper at Gradle 9.4.0, Fabric Loom 1.16.2, identity-mapping jar staged at `libs/intermediary-26.1.2-v2.jar` |
-| `fabric.mod.json` | ✅ 6 entrypoints: `main`, `client`, `fabric-datagen`, `jei_mod_plugin`, `wthit`, `wthit-client` |
-| Access widener | ✅ `usefultoolsmod.accesswidener` (FireBlock.getBurnOdds) |
-| Java sources (82 files) | ✅ All translated NeoForge → Fabric idioms |
+| `fabric.mod.json` | ✅ 5 entrypoints: `main`, `client`, `fabric-datagen`, `jei_mod_plugin`, `modmenu` (WTHIT uses `wthit_plugins.json` at the resources root, not entrypoints — see below) |
+| Access widener | ✅ `usefultoolsmod.accesswidener` — widens `FireBlock#getBurnOdds`, `BlockModelGenerators#createTrivialCube`, `ItemModelGenerators#{generateFlatItem,declareCustomModelItem}`, and the private `ItemModelGenerators#itemModelOutput` field for the datagen pipeline |
+| Mixins | ✅ `usefultoolsmod.mixins.json` — `MobMixin` (FinalizeSpawn + ChangeTarget cancellation), `LivingEntityMixin` (`@WrapMethod` on `hurtServer` for damage-amount mutation) |
+| Java sources (85 files) | ✅ All translated NeoForge → Fabric idioms; zero compile warnings (deprecation flag on) |
+| Datagen providers | ✅ All 7 restored as Fabric-API subclasses (`./gradlew runDatagen` runs in ~200 ms) — see CHANGELOG for the mapping |
 | Assets (~3,800 files) | ✅ Carried over verbatim from the NeoForge sibling port |
-| Datapack JSON | ✅ All recipes/advancements/loot tables/tags/worldgen baked into `src/main/generated/` |
-| Integration pins | ✅ JEI `29.5.0.28`, WTHIT `19.0.0`, badpackets `0.12.2`, Cloth Config `26.1.154` |
-| `./gradlew build` | ✅ Produces `build/libs/usefultoolsmod-2.2.2-26.1.2-fabric.jar` (1.7 MB) |
-| `./gradlew runServer` | ✅ Reaches `Done (1.576s)! For help, type "help"` with 48 mods loaded |
+| Datapack JSON | ✅ Re-emitted by datagen into `src/main/generated/`; matches the NeoForge baseline modulo 4 runtime-equivalent JSON drifts (documented in CHANGELOG) |
+| Integration pins | ✅ JEI `29.5.0.28`, WTHIT `19.0.0`, badpackets `0.12.2`, Cloth Config `26.1.154`, Mod Menu `18.0.0-alpha.8` |
+| In-game config screen | ✅ Cloth Config screen surfaced via Mod Menu (`modmenu` entrypoint + `compat/modmenu/UsefulToolsModMenuPlugin`); falls back to hand-editing `config/usefultoolsmod.properties` when Mod Menu is absent |
+| `./gradlew build` | ✅ Produces `build/libs/usefultoolsmod-2.2.2-26.1.2-fabric.jar` with zero compile warnings |
+| `./gradlew runServer` | ✅ Reaches `Done (0.145s)!` with 48 mods loaded |
+| `./gradlew runClient` | ⚠️ Loads cleanly; full in-world gameplay-parity smoke test against the NeoForge sibling not yet run |
 
-## What was deliberately skipped or stubbed
+## What is still skipped or stubbed
 
 | Area | Status | Notes |
 |---|---|---|
-| `ModEvents.onFinalizeSpawn`, `onLivingChangeTarget` | ⚠️ commented out | Two of the 10 server-side event handlers have no clean Fabric equivalent. Bodies preserved in `/* … */` with TODOs pointing at the `Mob#finalizeSpawn` / `Mob#setTarget` mixin recipe. |
-| `ModEvents.onLivingHurt` (damage *mutation*) | ⚠️ partial | The cancel path works via `ServerLivingEntityEvents.ALLOW_DAMAGE`; mutating the amount needs a mixin on `LivingEntity#hurt` because Fabric API 0.149.0 doesn't expose a `MODIFY_DAMAGE_AMOUNT` callback. |
-| Datagen providers (8 classes) | ⚠️ stub | NeoForge providers don't run on Fabric. The JSON they produced is baked into `src/main/generated/` so the mod is self-contained. `datagen/DataGenerators.java` is a no-op `DataGeneratorEntrypoint` placeholder. |
-| `compat/jer/**` | ⚠️ excluded from compile | No Fabric 26.1.x build of Just Enough Resources exists (same situation as the NeoForge sibling port). |
-| In-game Cloth Config screen | ⚠️ no Mod Menu wiring | `UsefulToolsConfigScreen.build(Screen)` compiles against `cloth-config-fabric:26.1.154`; surfacing it in-game needs a Mod Menu `modmenu` entrypoint (extra dep). Users edit `config/usefultoolsmod.properties` directly until that's added. |
-| JEI plugin deprecation warnings (7) | ⚠️ noisy but non-fatal | JEI 29.5.0.28 deprecated `RecipeType`, `IIngredientAcceptor#addItemStack`, and `IRecipeCatalystRegistration#addRecipeCatalyst`. The replacements (`RecipeType.create(...)`, `addStream(...)`, `addCatalyst(...)`) require a small rewrite of the JEI compat classes. |
+| `compat/jer/**` | ⚠️ excluded from compile | No Fabric 26.1.x build of Just Enough Resources exists (same situation as the NeoForge sibling port). When upstream ships one, drop the exclude in `build.gradle` and add the runtime dep. |
+| `runClient` gameplay-parity smoke test | ⚠️ not yet run end-to-end | Build/load path is verified — server reaches `Done`, all providers run, no Loader-level rejections. The post-load smoke test (place every block, fire each item, run a Spectral Infuser cycle, trigger the Ghost rules) is the last gate before release. |
+
+*Previously listed here as TODO; resolved since 2026-05-16:*
+
+- `ModEvents.onFinalizeSpawn` / `onLivingChangeTarget` → restored via `MobMixin` (see commits `00013c8`, `44acbe8`).
+- `ModEvents.onLivingHurt` damage-amount mutation → `LivingEntityMixin` with MixinExtras `@WrapMethod` on `LivingEntity#hurtServer`.
+- 7 datagen providers → all restored as Fabric-API subclasses (commit `a712d5a`).
+- Cloth Config in-game screen → wired through Mod Menu `18.0.0-alpha.8` (commits `6126c80`, `2d47dd4`).
+- JEI deprecation warnings → all 11 javac deprecations eliminated (commit `ad84d6b`).
 
 ## Translation map (NeoForge 26.1.2 → Fabric 26.1.2)
 

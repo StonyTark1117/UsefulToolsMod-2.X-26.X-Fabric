@@ -69,6 +69,26 @@ public class ModBlockTagProvider extends FabricTagsProvider.BlockTagsProvider {
                 .add(ModBlocks.POLISHED_QUARTZ_BLOCK)
                 .add(ModBlocks.POLISHED_PRISMARINE_BLOCK);
 
+        // Mirror each NEEDS_*_TOOL membership into the corresponding vanilla
+        // INCORRECT_FOR_*_TOOL tag. Without this, an iron pickaxe would
+        // successfully drop SEMBLOCK / SOBLOCK (those tags drive the
+        // tool-correctness check at mining time, not NEEDS_*_TOOL), and
+        // WTHIT can't establish a tier ordering between mod and vanilla
+        // tags (logs "Unsolvable tier comparison" at startup). Adding mod
+        // blocks at the highest tier they belong in is sufficient because
+        // vanilla chains `incorrect_for_stone_tool` ⊃ `incorrect_for_iron_tool`
+        // ⊃ `incorrect_for_diamond_tool` by tag reference.
+        valueLookupBuilder(BlockTags.INCORRECT_FOR_IRON_TOOL)
+                .add(ModBlocks.SOBLOCK)
+                .add(ModBlocks.SEMBLOCK);
+
+        valueLookupBuilder(BlockTags.INCORRECT_FOR_STONE_TOOL)
+                .add(ModBlocks.RGOLDBLOCK)
+                .add(ModBlocks.LBLOCK)
+                .add(ModBlocks.HRBLOCK)
+                .add(ModBlocks.HGLOW_BLOCK)
+                .add(ModBlocks.OBSHARD_BLOCK);
+
         valueLookupBuilder(ModTags.Blocks.NEEDS_HRED_TOOL).addOptionalTag(BlockTags.NEEDS_IRON_TOOL);
         valueLookupBuilder(ModTags.Blocks.NEEDS_HGLOW_TOOL).addOptionalTag(BlockTags.NEEDS_IRON_TOOL);
         valueLookupBuilder(ModTags.Blocks.NEEDS_JEM_TOOL).addOptionalTag(BlockTags.NEEDS_DIAMOND_TOOL);

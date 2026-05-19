@@ -13,7 +13,7 @@
 		"issues": "https://github.com/StonyTark1117/UsefulToolsMod-2.X-26.X-Fabric/issues"
 	},
 	"license": "${mod_license}",
-	"icon": "assets/usefultoolsmod/icon.png",
+	"icon": "grenade.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
@@ -27,12 +27,6 @@
 		],
 		"jei_mod_plugin": [
 			"com.stonytark.usefultoolsmod.compat.jei.UsefulToolsJeiPlugin"
-		],
-		"wthit": [
-			"com.stonytark.usefultoolsmod.compat.wthit.UsefulToolsWthitPlugin"
-		],
-		"wthit-client": [
-			"com.stonytark.usefultoolsmod.compat.wthit.UsefulToolsWthitClientPlugin"
 		],
 		"modmenu": [
 			"com.stonytark.usefultoolsmod.compat.modmenu.UsefulToolsModMenuPlugin"

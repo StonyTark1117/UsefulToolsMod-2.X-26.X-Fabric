@@ -1,5 +1,47 @@
 # Changelog
 
+## 2.2.2-26.1.2-fabric — 2026-05-18 (runClient pass)
+
+In-game smoke test surfaced four issues, all fixed:
+
+- **Mod icon not shown in the mods list.** `fabric.mod.json` pointed at
+  `assets/usefultoolsmod/icon.png`, which doesn't exist in this port. The
+  icon file actually ships at the resources root as `grenade.png` (matching
+  the NeoForge sibling's `logoFile`). Fixed by updating the `icon` field to
+  `grenade.png`.
+- **WTHIT Spectral Infuser progress overlay missing.** WTHIT `fabric-19.0.0`
+  loads plugins from `wthit_plugins.json` at the resources root, *not* from
+  Fabric entrypoints — the `wthit` / `wthit-client` entrypoint convention
+  was never recognized by this WTHIT version. The plugin classes were
+  consequently never instantiated. Fixed by adding
+  `src/main/resources/wthit_plugins.json` (same format as the NeoForge
+  sibling's `waila_plugins.json`) and dropping the stale entrypoints from
+  `fabric.mod.json`. WTHIT now logs `Initializing common plugin
+  usefultoolsmod:plugin at ...UsefulToolsWthitPlugin` at startup.
+- **WTHIT Ghost entity tooltip missing** — same root cause and same fix.
+- **Iron pickaxes could correctly drop SEMBLOCK / SOBLOCK** (latent gameplay
+  bug, also present on the NeoForge sibling). The mining-tier check relies
+  on `INCORRECT_FOR_*_TOOL` membership, and the seven mod blocks that
+  required iron-or-diamond tier were only listed in `NEEDS_*_TOOL` — never
+  added to the corresponding incorrect-for tags. Fixed in
+  `ModBlockTagProvider`: SEMBLOCK + SOBLOCK now extend
+  `INCORRECT_FOR_IRON_TOOL`; the five iron-tier mod blocks extend
+  `INCORRECT_FOR_STONE_TOOL`. Vanilla chains the lower-tier "incorrect"
+  tags upward so the additions propagate.
+
+The WTHIT `Unsolvable tier comparison` log warnings still fire on resource
+reload — WTHIT's view of mod-tier-tool ordering is driven by a heuristic
+that doesn't map cleanly onto `ToolMaterial` instances whose stats don't
+match vanilla `Tiers` (Polished Obsidian: speed 10, enchant 18). Same noise
+present on the NeoForge sibling; log-only, no gameplay impact.
+
+Also:
+
+- `build.gradle`: switched the publishing repo `url` to `url =` assignment
+  (silences the lone Gradle-10 deprecation warning).
+- `PORT_HANDOFF.md`: refreshed the status block and the "skipped/stubbed"
+  table to reflect five commits of progress since 2026-05-16.
+
 ## 2.2.2-26.1.2-fabric — 2026-05-16
 
 Initial Fabric port targeting Minecraft 26.1.2. Forked from the 1.21.1 Fabric
